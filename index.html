@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Weekly Money</title>
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0b0f17;
+    --surface: #131a26;
+    --surface-2: #1a2333;
+    --border: #253044;
+    --blue: #a9c9f5;
+    --blue-soft: #7fa8d9;
+    --blue-dim: #5b7599;
+    --text-dim: #8b9bb4;
+    --coral: #f2a4a4;
+    --coral-deep: #e08888;
+    --mint: #9fdcc0;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--bg);
+    font-family: 'Inter', sans-serif;
+    color: var(--blue);
+    min-height: 100vh;
+    display:flex;
+    justify-content:center;
+  }
+  .app{
+    width:100%;
+    max-width: 440px;
+    padding: 20px 20px 40px;
+    display:flex;
+    flex-direction:column;
+  }
+  .above-fold{
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+  }
+  .masthead{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 8px;
+  }
+  .masthead h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size: 1rem;
+    margin:0;
+    color: var(--blue-soft);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .masthead .date{
+    font-size:0.75rem;
+    color: var(--text-dim);
+  }
+
+  .balance-block{
+    text-align:center;
+    padding: 36px 0 28px;
+  }
+  .balance-label{
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .balance{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size: 4rem;
+    line-height:1;
+    letter-spacing: -0.02em;
+    color: var(--blue);
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 32px rgba(169,201,245,0.25);
+  }
+  .balance.negative{ color: var(--coral); text-shadow: 0 0 32px rgba(242,164,164,0.25); }
+  .of-total{
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .of-total button{
+    background:none;
+    border:none;
+    color: var(--blue-soft);
+    font: inherit;
+    font-weight:600;
+    padding:0;
+    cursor:pointer;
+  }
+
+  .presets{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .preset-btn{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 0;
+    font-family:'Space Grotesk', sans-serif;
+    font-size: 1.2rem;
+    font-weight:600;
+    color: var(--coral);
+    cursor:pointer;
+    transition: transform 0.08s ease, background 0.15s ease;
+  }
+  .preset-btn:active{ transform: scale(0.95); background: var(--surface-2); }
+
+  .action-row{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .custom-btn, .add-btn{
+    width:100%;
+    border-radius: 14px;
+    padding: 14px 0;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size: 0.92rem;
+    cursor:pointer;
+    transition: transform 0.08s ease, opacity 0.15s ease;
+    border: 1px solid var(--border);
+  }
+  .custom-btn{
+    background: var(--surface);
+    color: var(--coral);
+  }
+  .add-btn{
+    background: transparent;
+    color: var(--mint);
+    border-color: rgba(159,220,192,0.35);
+  }
+  .custom-btn:active, .add-btn:active{ transform: scale(0.97); }
+
+  .footer-actions{
+    display:flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .link-btn{
+    background:none;
+    border:none;
+    font: inherit;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    cursor:pointer;
+    padding:6px 0;
+  }
+  .link-btn.danger{ color: var(--coral-deep); }
+
+  .ledger{
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+  }
+  .section-title{
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .ledger-entry{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size: 0.9rem;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ledger-entry:last-child{ border-bottom:none; }
+  .ledger-entry .when{ color: var(--text-dim); font-size: 0.82rem; }
+  .ledger-entry .amt{
+    font-family:'Space Grotesk', sans-serif;
+    font-variant-numeric: tabular-nums;
+    color: var(--coral);
+    font-weight:600;
+  }
+  .ledger-entry .amt.credit{ color: var(--mint); }
+  .ledger-empty{
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    padding: 8px 0;
+  }
+
+  .status-line{
+    text-align:center;
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+    margin-bottom: 8px;
+    min-height: 14px;
+  }
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,0.55);
+    display:flex; align-items:flex-end;
+    justify-content:center;
+    z-index: 10;
+    opacity:0; pointer-events:none;
+    transition: opacity 0.18s ease;
+  }
+  .overlay.open{ opacity:1; pointer-events:auto; }
+  .sheet{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom:none;
+    width:100%;
+    max-width: 440px;
+    border-radius: 20px 20px 0 0;
+    padding: 24px 22px 30px;
+    transform: translateY(16px);
+    transition: transform 0.18s ease;
+  }
+  .overlay.open .sheet{ transform: translateY(0); }
+  .sheet h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size: 1.15rem;
+    margin: 0 0 16px;
+    color: var(--blue);
+  }
+  .sheet input{
+    width:100%;
+    font-family:'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    font-weight:600;
+    border: none;
+    border-bottom: 2px solid var(--border);
+    background: transparent;
+    padding: 6px 2px 12px;
+    color: var(--blue);
+    outline: none;
+  }
+  .sheet input:focus{ border-color: var(--blue-soft); }
+  .sheet-actions{
+    display:flex;
+    gap:10px;
+    margin-top: 22px;
+  }
+  .sheet-actions button{
+    flex:1;
+    border:none;
+    border-radius: 12px;
+    padding: 14px 0;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size: 0.92rem;
+    cursor:pointer;
+  }
+  .sheet-cancel{ background: var(--surface-2); color: var(--text-dim); }
+  .sheet-confirm{ background: var(--blue); color: var(--bg); }
+  .hint{ font-size: 0.78rem; color: var(--text-dim); margin-top:6px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="above-fold">
+  <div class="masthead">
+    <h1>Weekly Money</h1>
+    <div class="date" id="weekRange"></div>
+  </div>
+
+  <div class="balance-block">
+    <div class="balance-label">Left to spend</div>
+    <div class="balance" id="balanceDisplay">£0.00</div>
+    <div class="of-total" id="ofTotalRow">of £0.00 — <button id="editAmountBtn2">change</button></div>
+  </div>
+
+  <div class="presets">
+    <button class="preset-btn" data-amt="5">−£5</button>
+    <button class="preset-btn" data-amt="10">−£10</button>
+    <button class="preset-btn" data-amt="20">−£20</button>
+  </div>
+
+  <div class="action-row">
+    <button class="custom-btn" id="customBtn">Custom amount</button>
+    <button class="add-btn" id="addBtn">+ Add money</button>
+  </div>
+
+  <div class="footer-actions">
+    <button class="link-btn danger" id="resetBtn">Reset this week</button>
+    <button class="link-btn" id="setAmountBtn">Set weekly amount</button>
+  </div>
+
+  <div class="status-line" id="statusLine"></div>
+  </div>
+
+  <div class="ledger" id="ledgerSection">
+    <div class="section-title">This week's entries</div>
+    <div id="ledgerList"><div class="ledger-empty">Nothing yet.</div></div>
+  </div>
+</div>
+
+<!-- Set/Change amount sheet -->
+<div class="overlay" id="amountOverlay">
+  <div class="sheet">
+    <h2 id="amountSheetTitle">Set your weekly amount</h2>
+    <input type="number" inputmode="decimal" id="amountInput" placeholder="0.00" step="0.01" min="0">
+    <div class="hint">This becomes your new starting balance for the week.</div>
+    <div class="sheet-actions">
+      <button class="sheet-cancel" id="amountCancel">Cancel</button>
+      <button class="sheet-confirm" id="amountConfirm">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom spend sheet -->
+<div class="overlay" id="customOverlay">
+  <div class="sheet">
+    <h2>Take out a custom amount</h2>
+    <input type="number" inputmode="decimal" id="customInput" placeholder="0.00" step="0.01" min="0">
+    <div class="sheet-actions">
+      <button class="sheet-cancel" id="customCancel">Cancel</button>
+      <button class="sheet-confirm" id="customConfirm">Take out</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add money sheet -->
+<div class="overlay" id="addOverlay">
+  <div class="sheet">
+    <h2>Add money</h2>
+    <input type="number" inputmode="decimal" id="addInput" placeholder="0.00" step="0.01" min="0">
+    <div class="hint">For extra cash, like a gift from a relative — this tops up your balance without changing your set weekly amount.</div>
+    <div class="sheet-actions">
+      <button class="sheet-cancel" id="addCancel">Cancel</button>
+      <button class="sheet-confirm" id="addConfirm">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'weekly-money-state';
+  let state = { weeklyAmount: null, remaining: null, transactions: [] };
+
+  const balanceDisplay = document.getElementById('balanceDisplay');
+  const ofTotalRow = document.getElementById('ofTotalRow');
+  const ledgerList = document.getElementById('ledgerList');
+  const statusLine = document.getElementById('statusLine');
+  const weekRange = document.getElementById('weekRange');
+
+  function fmt(n){
+    const sign = n < 0 ? '-' : '';
+    return sign + '£' + Math.abs(n).toFixed(2);
+  }
+
+  function setStatus(msg){
+    statusLine.textContent = msg;
+    if(msg){ setTimeout(()=>{ if(statusLine.textContent === msg) statusLine.textContent=''; }, 2200); }
+  }
+
+  function renderWeekRange(){
+    const now = new Date();
+    const day = now.getDay();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - ((day + 6) % 7));
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    const opts = { day:'numeric', month:'short' };
+    weekRange.textContent = monday.toLocaleDateString('en-GB', opts) + ' – ' + sunday.toLocaleDateString('en-GB', opts);
+  }
+
+  function render(){
+    if(state.weeklyAmount === null){
+      balanceDisplay.textContent = '£0.00';
+      balanceDisplay.classList.remove('negative');
+      ofTotalRow.innerHTML = 'No weekly amount set — <button id="editAmountBtn2">set one</button>';
+    } else {
+      balanceDisplay.textContent = fmt(state.remaining);
+      balanceDisplay.classList.toggle('negative', state.remaining < 0);
+      ofTotalRow.innerHTML = 'of ' + fmt(state.weeklyAmount) + ' — <button id="editAmountBtn2">change</button>';
+    }
+    document.getElementById('editAmountBtn2').addEventListener('click', ()=>openAmountSheet());
+
+    if(!state.transactions.length){
+      ledgerList.innerHTML = '<div class="ledger-empty">Nothing yet.</div>';
+    } else {
+      ledgerList.innerHTML = state.transactions.slice().reverse().map(t => {
+        const time = new Date(t.date).toLocaleDateString('en-GB', {weekday:'short', hour:'2-digit', minute:'2-digit'});
+        const isCredit = t.type === 'add';
+        const sign = isCredit ? '+' : '-';
+        return '<div class="ledger-entry"><span class="when">' + (isCredit ? 'Added money' : 'Spent') + ' · ' + time + '</span><span class="amt' + (isCredit ? ' credit' : '') + '">' + sign + fmt(t.amount) + '</span></div>';
+      }).join('');
+    }
+  }
+
+  function save(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch(e){
+      console.error('Save failed', e);
+      setStatus("Couldn't save — try again");
+    }
+  }
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        state = JSON.parse(raw);
+      }
+    } catch(e){
+      // no saved state yet, that's fine
+    }
+    render();
+  }
+
+  function spend(amount){
+    if(state.weeklyAmount === null){ openAmountSheet(); return; }
+    if(!amount || amount <= 0) return;
+    state.remaining = Math.round((state.remaining - amount) * 100) / 100;
+    state.transactions.push({ amount: amount, date: new Date().toISOString(), type: 'spend' });
+    render();
+    save();
+    setStatus('Took out ' + fmt(amount));
+  }
+
+  function addMoney(amount){
+    if(state.weeklyAmount === null){ openAmountSheet(); return; }
+    if(!amount || amount <= 0) return;
+    state.remaining = Math.round((state.remaining + amount) * 100) / 100;
+    state.transactions.push({ amount: amount, date: new Date().toISOString(), type: 'add' });
+    render();
+    save();
+    setStatus('Added ' + fmt(amount));
+  }
+
+  document.querySelectorAll('.preset-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> spend(parseFloat(btn.dataset.amt)));
+  });
+
+  const customOverlay = document.getElementById('customOverlay');
+  const customInput = document.getElementById('customInput');
+  document.getElementById('customBtn').addEventListener('click', ()=>{
+    if(state.weeklyAmount === null){ openAmountSheet(); return; }
+    customInput.value = '';
+    customOverlay.classList.add('open');
+    setTimeout(()=>customInput.focus(), 200);
+  });
+  document.getElementById('customCancel').addEventListener('click', ()=> customOverlay.classList.remove('open'));
+  document.getElementById('customConfirm').addEventListener('click', ()=>{
+    const val = parseFloat(customInput.value);
+    customOverlay.classList.remove('open');
+    if(!isNaN(val) && val > 0) spend(Math.round(val*100)/100);
+  });
+
+  const addOverlay = document.getElementById('addOverlay');
+  const addInput = document.getElementById('addInput');
+  document.getElementById('addBtn').addEventListener('click', ()=>{
+    if(state.weeklyAmount === null){ openAmountSheet(); return; }
+    addInput.value = '';
+    addOverlay.classList.add('open');
+    setTimeout(()=>addInput.focus(), 200);
+  });
+  document.getElementById('addCancel').addEventListener('click', ()=> addOverlay.classList.remove('open'));
+  document.getElementById('addConfirm').addEventListener('click', ()=>{
+    const val = parseFloat(addInput.value);
+    addOverlay.classList.remove('open');
+    if(!isNaN(val) && val > 0) addMoney(Math.round(val*100)/100);
+  });
+
+  const amountOverlay = document.getElementById('amountOverlay');
+  const amountInput = document.getElementById('amountInput');
+  const amountSheetTitle = document.getElementById('amountSheetTitle');
+
+  function openAmountSheet(){
+    amountSheetTitle.textContent = state.weeklyAmount === null ? 'Set your weekly amount' : 'Change weekly amount';
+    amountInput.value = state.weeklyAmount !== null ? state.weeklyAmount : '';
+    amountOverlay.classList.add('open');
+    setTimeout(()=>amountInput.focus(), 200);
+  }
+  document.getElementById('setAmountBtn').addEventListener('click', ()=>openAmountSheet());
+  document.getElementById('amountCancel').addEventListener('click', ()=> amountOverlay.classList.remove('open'));
+  document.getElementById('amountConfirm').addEventListener('click', ()=>{
+    const val = parseFloat(amountInput.value);
+    if(!isNaN(val) && val >= 0){
+      state.weeklyAmount = Math.round(val*100)/100;
+      state.remaining = state.weeklyAmount;
+      state.transactions = [];
+      render();
+      save();
+      setStatus('Weekly amount set to ' + fmt(state.weeklyAmount));
+    }
+    amountOverlay.classList.remove('open');
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    if(state.weeklyAmount === null) return;
+    state.remaining = state.weeklyAmount;
+    state.transactions = [];
+    render();
+    save();
+    setStatus('Week reset to ' + fmt(state.weeklyAmount));
+  });
+
+  [customOverlay, addOverlay, amountOverlay].forEach(ov=>{
+    ov.addEventListener('click', (e)=>{ if(e.target === ov) ov.classList.remove('open'); });
+  });
+
+  renderWeekRange();
+  load();
+})();
+</script>
+
+</body>
+</html>
