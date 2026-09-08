@@ -274,6 +274,19 @@
 </head>
 <body>
 
+<div class="overlay" id="syncOverlay">
+  <div class="sheet">
+    <h2>Sign in to sync</h2>
+    <input type="email" id="syncEmail" placeholder="Email" style="font-size:1.1rem; margin-bottom:14px;">
+    <input type="password" id="syncPassword" placeholder="Password" style="font-size:1.1rem;">
+    <div class="hint" id="syncError" style="color:var(--coral-deep);"></div>
+    <div class="sheet-actions">
+      <button class="sheet-cancel" id="syncSkip">Use offline</button>
+      <button class="sheet-confirm" id="syncSignIn">Sign in</button>
+    </div>
+  </div>
+</div>
+
 <div class="app">
   <div class="above-fold">
   <div class="masthead">
@@ -350,7 +363,23 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC5Z26AVb0NbTu88JjmdG1H33czsxWN_QQ",
+  authDomain: "awe-apps-51edd.firebaseapp.com",
+  projectId: "awe-apps-51edd",
+  storageBucket: "awe-apps-51edd.firebasestorage.app",
+  messagingSenderId: "842017602249",
+  appId: "1:842017602249:web:f4c73f0a0bd57d69caeb18"
+};
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+
 (function(){
   const STORAGE_KEY = 'weekly-money-state';
   let state = { weeklyAmount: null, remaining: null, transactions: [] };
@@ -413,6 +442,7 @@
       console.error('Save failed', e);
       setStatus("Couldn't save — try again");
     }
+    pushToCloud();
   }
 
   function load(){
@@ -518,6 +548,71 @@
   [customOverlay, addOverlay, amountOverlay].forEach(ov=>{
     ov.addEventListener('click', (e)=>{ if(e.target === ov) ov.classList.remove('open'); });
   });
+
+  // --- Cloud sync ---
+  const syncOverlay = document.getElementById('syncOverlay');
+  const syncEmail = document.getElementById('syncEmail');
+  const syncPassword = document.getElementById('syncPassword');
+  const syncError = document.getElementById('syncError');
+  const syncSignInBtn = document.getElementById('syncSignIn');
+  const syncSkipBtn = document.getElementById('syncSkip');
+
+  let currentUid = null;
+  let unsubscribeSnapshot = null;
+
+  setPersistence(auth, browserLocalPersistence).catch(function(){});
+
+  onAuthStateChanged(auth, function(user){
+    if(user){
+      currentUid = user.uid;
+      syncOverlay.classList.remove('open');
+      subscribeToCloud();
+    } else {
+      currentUid = null;
+      syncOverlay.classList.add('open');
+    }
+  });
+
+  syncSignInBtn.addEventListener('click', function(){
+    const email = syncEmail.value.trim();
+    const pass = syncPassword.value;
+    if(!email || !pass){ syncError.textContent = 'Enter your email and password.'; return; }
+    syncError.textContent = 'Signing in…';
+    signInWithEmailAndPassword(auth, email, pass)
+      .then(function(){ syncError.textContent = ''; })
+      .catch(function(){ syncError.textContent = "Couldn't sign in — check your details."; });
+  });
+
+  syncSkipBtn.addEventListener('click', function(){
+    syncOverlay.classList.remove('open');
+  });
+
+  function subscribeToCloud(){
+    if(unsubscribeSnapshot) unsubscribeSnapshot();
+    const ref = doc(db, 'users', currentUid, 'appData', 'budget');
+    unsubscribeSnapshot = onSnapshot(ref, function(snap){
+      if(snap.exists()){
+        const remote = snap.data();
+        if(remote && typeof remote === 'object'){
+          state = {
+            weeklyAmount: (typeof remote.weeklyAmount === 'number') ? remote.weeklyAmount : null,
+            remaining: (typeof remote.remaining === 'number') ? remote.remaining : null,
+            transactions: Array.isArray(remote.transactions) ? remote.transactions : []
+          };
+          try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+          render();
+        }
+      } else {
+        pushToCloud();
+      }
+    }, function(err){ console.error('Sync error', err); });
+  }
+
+  function pushToCloud(){
+    if(!currentUid) return;
+    const ref = doc(db, 'users', currentUid, 'appData', 'budget');
+    setDoc(ref, state).catch(function(err){ console.error('Push failed', err); });
+  }
 
   renderWeekRange();
   load();
