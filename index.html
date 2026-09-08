@@ -363,23 +363,7 @@
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyC5Z26AVb0NbTu88JjmdG1H33czsxWN_QQ",
-  authDomain: "awe-apps-51edd.firebaseapp.com",
-  projectId: "awe-apps-51edd",
-  storageBucket: "awe-apps-51edd.firebasestorage.app",
-  messagingSenderId: "842017602249",
-  appId: "1:842017602249:web:f4c73f0a0bd57d69caeb18"
-};
-const fbApp = initializeApp(firebaseConfig);
-const auth = getAuth(fbApp);
-const db = getFirestore(fbApp);
-
+<script>
 (function(){
   const STORAGE_KEY = 'weekly-money-state';
   let state = { weeklyAmount: null, remaining: null, transactions: [] };
@@ -557,40 +541,70 @@ const db = getFirestore(fbApp);
   const syncSignInBtn = document.getElementById('syncSignIn');
   const syncSkipBtn = document.getElementById('syncSkip');
 
+  let auth = null, db = null, fsDoc = null, fsSetDoc = null, fsOnSnapshot = null;
   let currentUid = null;
   let unsubscribeSnapshot = null;
-
-  setPersistence(auth, browserLocalPersistence).catch(function(){});
-
-  onAuthStateChanged(auth, function(user){
-    if(user){
-      currentUid = user.uid;
-      syncOverlay.classList.remove('open');
-      subscribeToCloud();
-    } else {
-      currentUid = null;
-      syncOverlay.classList.add('open');
-    }
-  });
-
-  syncSignInBtn.addEventListener('click', function(){
-    const email = syncEmail.value.trim();
-    const pass = syncPassword.value;
-    if(!email || !pass){ syncError.textContent = 'Enter your email and password.'; return; }
-    syncError.textContent = 'Signing in…';
-    signInWithEmailAndPassword(auth, email, pass)
-      .then(function(){ syncError.textContent = ''; })
-      .catch(function(){ syncError.textContent = "Couldn't sign in — check your details."; });
-  });
 
   syncSkipBtn.addEventListener('click', function(){
     syncOverlay.classList.remove('open');
   });
 
+  async function initSync(){
+    try{
+      const [appMod, authMod, storeMod] = await Promise.all([
+        import('https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js'),
+        import('https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js'),
+        import('https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js')
+      ]);
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC5Z26AVb0NbTu88JjmdG1H33czsxWN_QQ",
+        authDomain: "awe-apps-51edd.firebaseapp.com",
+        projectId: "awe-apps-51edd",
+        storageBucket: "awe-apps-51edd.firebasestorage.app",
+        messagingSenderId: "842017602249",
+        appId: "1:842017602249:web:f4c73f0a0bd57d69caeb18"
+      };
+      const fbApp = appMod.initializeApp(firebaseConfig);
+      auth = authMod.getAuth(fbApp);
+      db = storeMod.getFirestore(fbApp);
+      fsDoc = storeMod.doc;
+      fsSetDoc = storeMod.setDoc;
+      fsOnSnapshot = storeMod.onSnapshot;
+
+      authMod.setPersistence(auth, authMod.browserLocalPersistence).catch(function(){});
+
+      authMod.onAuthStateChanged(auth, function(user){
+        if(user){
+          currentUid = user.uid;
+          syncOverlay.classList.remove('open');
+          subscribeToCloud();
+        } else {
+          currentUid = null;
+          syncOverlay.classList.add('open');
+        }
+      });
+
+      syncSignInBtn.addEventListener('click', function(){
+        const email = syncEmail.value.trim();
+        const pass = syncPassword.value;
+        if(!email || !pass){ syncError.textContent = 'Enter your email and password.'; return; }
+        syncError.textContent = 'Signing in…';
+        authMod.signInWithEmailAndPassword(auth, email, pass)
+          .then(function(){ syncError.textContent = ''; })
+          .catch(function(){ syncError.textContent = "Couldn't sign in — check your details."; });
+      });
+    } catch(e){
+      console.error('Cloud sync unavailable, continuing offline', e);
+      syncOverlay.classList.remove('open');
+      setStatus('Sync unavailable — working offline');
+    }
+  }
+
   function subscribeToCloud(){
     if(unsubscribeSnapshot) unsubscribeSnapshot();
-    const ref = doc(db, 'users', currentUid, 'appData', 'budget');
-    unsubscribeSnapshot = onSnapshot(ref, function(snap){
+    const ref = fsDoc(db, 'users', currentUid, 'appData', 'budget');
+    unsubscribeSnapshot = fsOnSnapshot(ref, function(snap){
       if(snap.exists()){
         const remote = snap.data();
         if(remote && typeof remote === 'object'){
@@ -609,10 +623,12 @@ const db = getFirestore(fbApp);
   }
 
   function pushToCloud(){
-    if(!currentUid) return;
-    const ref = doc(db, 'users', currentUid, 'appData', 'budget');
-    setDoc(ref, state).catch(function(err){ console.error('Push failed', err); });
+    if(!currentUid || !db) return;
+    const ref = fsDoc(db, 'users', currentUid, 'appData', 'budget');
+    fsSetDoc(ref, state).catch(function(err){ console.error('Push failed', err); });
   }
+
+  initSync();
 
   renderWeekRange();
   load();
